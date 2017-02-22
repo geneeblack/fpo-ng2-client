@@ -1,0 +1,32 @@
+<div class="operator_summary">
+  <table>
+    <tr>
+      <th>Application Type</th>
+      <td>{{ pilot?.applicationType | capitalize }}</td>
+    </tr>
+    <tr>
+      <th>Name</th>
+      <td>{{ pilot?.name }}</td>
+    </tr>
+    <tr>
+      <th>Total Acres</th>
+      <td>{{ pilot?.acres }}</td>
+    </tr>
+    <tr>
+      <th>Tank Size</th>
+      <td>{{ pilot?.volume | unitpartials:pilot.volume_units }}</td>
+    </tr>
+    <tr>
+      <th># of Equal Loads</th>
+      <td>{{ pilot?.equalLoadCount }}</td>
+    </tr>
+    <tr>
+      <th>Equal Load Size</th>
+      <td>{{ pilot?.equalLoadSize  | round:2  | unitpartials: pilot?.equalLoadSizeUnits }}</td>
+    </tr>
+    <tr>
+      <th># of Acres/Load</th>
+      <td>{{ pilot?.acresPerEqualLoad | round:2 | number : '1.2-2' }}</td>
+    </tr>
+  </table>
+</div>

@@ -1,0 +1,112 @@
+<div *ngIf="batch == null && errorMessage == null">
+</div>
+<div class="alert alert-danger" *ngIf="errorMessage != null">
+ {{ errorMessage }}
+</div>
+<div *ngIf="batch != null && errorMessage == null">
+  <div class="content">
+    <div id="page_title">
+      <h1>{{ batch?.title }}</h1>
+    </div>
+    <div>
+      <div master-loading-summary [batch]="batch" id="summary_panel" class="panel">
+      </div>
+      <div *ngIf="batch?.product_combinations.length > 1" class="panel">
+        <p style="color:red">Sorry, you can't calculate loads for jobs that contain more than one product combination different product rates.</p>
+      </div>
+      <div *ngIf="batch?.product_combinations.length == 0" class="panel">
+        <p style="color:red">Sorry, you can't calculate loads for jobs that contain no products.</p>
+      </div>
+      <div *ngIf="batch?.product_combinations.length < 2">
+        <div id="calculator_panel" class="panel">
+          <h2><span>Pilot/Operators</span></h2>
+          <div id="calculator" class="calculator">
+            <div id="calculator-toolbar">
+              <span id="mode" class="ui-buttonset">
+            
+<input (click)="calculateEqualLoadsChecked()" type="radio" id="equal" name="mode" checked="checked" class="ui-helper-hidden-accessible">
+<label for="equal" class="ui-button ui-widget ui-state-active ui-state-default ui-button-text-only ui-corner-left" role="button"
+  aria-disabled="false" title="Calculate equal sized loads for each operator">
+              <span class="ui-button-text">Equal Loads</span>
+              </label>
+              <input (click)="calculateFullLoadsChecked()" type="radio" id="full" name="mode" class="ui-helper-hidden-accessible">
+              <label for="full" class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-right" role="button" aria-disabled="false"
+                title="Calculate full loads and a partial load for any remaining product">
+              <span class="ui-button-text">Full Loads</span></label>
+              </span>
+              <button (click)="showDialog = !showDialog" class="add_operator ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
+                role="button" aria-disabled="false"><span class="ui-button-text" title="Add Pilot/Operator">Add Pilot/Operator</span>
+            </button>
+            </div>
+            <pilot-dialog (pilotAdd)="handlePilotAdd($event)" [(visible)]="showDialog" [inbatch]="batch" [inpilots]="pilots">
+            </pilot-dialog>
+            <div *ngIf="dryPilots && dryPilots.length > 0" style="width:100%">
+              <div style="font-weight:bold;border-bottom:1px solid black;padding-top:4px;">Dry Applications</div>
+              <div style="width:100%;" *ngIf="calcType=='equal'" id="operators">
+                <div style="padding:4px;border-bottom:1px solid black;" *ngFor="let pilot of dryPilots" class="operator">
+                  <div pilot-summary-equal [pilot]="pilot" *ngIf="calcType=='equal'" class="operator_summary">
+                  </div>
+                  <div loads [loads]="pilot?.equal_load" class="equal_loads loads">
+                  </div>
+                  <div class="clear"></div>
+                  <div class="delete_container">
+                    <button (click)="handlePilotDelete(pilot)" class="delete ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
+                      role="button" aria-disabled="false" data-original-title="Delete this operator"><span class="ui-button-text">Delete</span></button>
+                  </div>
+                </div>
+              </div>
+              <div style="width:100%;" *ngIf="calcType=='full'" id="operators">
+                <div style="padding:4px;border-bottom:1px solid black;" *ngFor="let pilot of dryPilots" class="operator">
+                  <div pilot-summary-full [pilot]="pilot" class="operator_summary">
+                  </div>
+                  <div>
+                    <div *ngIf="pilot.fullLoadCount > 0" loads [loads]="pilot?.full_load" class="full_loads loads">
+                    </div>
+                    <div *ngIf="pilot.partialLoadSize > 0" loads [loads]="pilot?.partial_load" class="partial_loads loads">
+                    </div>
+                  </div>
+                  <div class="clear"></div>
+                  <div class="delete_container">
+                    <button (click)="handlePilotDelete(pilot)" class="delete ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
+                      role="button" aria-disabled="false" data-original-title="Delete this operator"><span class="ui-button-text">Delete</span></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="liquidPilots && liquidPilots.length > 0" style="width:100%">
+              <div style="font-weight:bold;border-bottom:1px solid black;padding-top:4px;">Liquid Applications</div>
+              <div style="width:100%;" *ngIf="calcType=='equal'" id="operators">
+                <div style="padding:4px;border-bottom:1px solid black;" *ngFor="let pilot of liquidPilots" class="operator">
+                  <div pilot-summary-equal [pilot]="pilot" *ngIf="calcType=='equal'" class="operator_summary">
+                  </div>
+                  <div loads [loads]="pilot?.equal_load" class="equal_loads loads">
+                  </div>
+                  <div class="clear"></div>
+                  <div class="delete_container">
+                    <button (click)="handlePilotDelete(pilot)" class="delete ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
+                      role="button" aria-disabled="false" data-original-title="Delete this operator"><span class="ui-button-text">Delete</span></button>
+                  </div>
+                </div>
+              </div>
+              <div style="width:100%;" *ngIf="calcType=='full'" id="operators">
+                <div style="padding:4px;border-bottom:1px solid black;" *ngFor="let pilot of liquidPilots" class="operator">
+                  <div pilot-summary-full [pilot]="pilot" class="operator_summary">
+                  </div>
+                  <div>
+                    <div *ngIf="pilot.fullLoadCount > 0" loads [loads]="pilot?.full_load" class="full_loads loads">
+                    </div>
+                    <div *ngIf="pilot.partialLoadSize > 0" loads [loads]="pilot?.partial_load" class="partial_loads loads">
+                    </div>
+                  </div>
+                  <div class="clear"></div>
+                  <div class="delete_container">
+                    <button (click)="handlePilotDelete(pilot)" class="delete ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
+                      role="button" aria-disabled="false" data-original-title="Delete this operator"><span class="ui-button-text">Delete</span></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

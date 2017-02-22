@@ -1,0 +1,26 @@
+<div class="products_container">
+  <table class="padded full-width products">
+    <thead>
+      <tr>
+        <th colspan="4">
+          {{ loads?.heading }} ({{ loads?.loadCount }})
+        </th>
+      </tr>
+      <tr>
+        <th>Product</th>
+        <th>Base Product</th>
+        <th>Volume</th>
+        <th>Weight</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let product of loads?.products" class="product_row">
+        <td class="left"><strong>{{ product?.name }}</strong>{{ product?.rate_label ? ' (' + product?.rate_label +')' : '' }}
+        </td>
+        <td class="left"><strong>{{ product?.base_product }}</strong></td>
+        <td class="right"><strong>{{ product?.volume_in_units | round:4 | unitpartials:product?.volume_units }} </strong></td>
+        <td class="right"><strong>{{ product?.weight_in_units | round:4 | unitpartials: product?.weight_units }} </strong></td>
+      </tr>
+    </tbody>
+  </table>
+</div>

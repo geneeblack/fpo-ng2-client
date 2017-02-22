@@ -1,0 +1,142 @@
+<div>
+  <div style="float:right;font-weight:bold;">GPA: {{ batch?.gpa }}</div>
+  <div class="clear"></div>
+  <div style="width:80%">
+    <div *ngIf="batch?.applicator.products.length > 0" class="mls-products">
+      <table class="padded full-width">
+        <thead>
+          <tr>
+            <th style="width: 40%">{{batch?.applicator.business_name}} Products</th>
+            <th style="width: 20%">Total Acres</th>
+            <th style="width: 20%">Total Volume</th>
+            <th style="width: 20%">Total Weight</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let product of batch?.applicator.products">
+            <td>{{ product.name }}</td>
+            <td class="right">{{ product.acres }}</td>
+            <td>
+              <table class="volume_table">
+                <tr>
+                  <td>{{product.total.toFixed(2)}} {{product.applied_units}}</td>
+                </tr>
+                <tr *ngIf="product.is_liquid && product.weight > 0" style="font-size: 0.8em;">
+                  <td>{{product.weight.toFixed(2)}} {{product.weight_units}}</td>
+                </tr>
+                <tr *ngIf="!product.is_liquid && product.volume > 0" style="font-size: 0.8em;">
+                  <td>{{product.volume.toFixed(2)}} {{product.volume_units}}</td>
+                </tr>
+              </table>
+            </td>
+            <td>
+              <div *ngIf="product.weight.toFixed(2)>0">
+                {{product.weight.toFixed(2)}} {{product.weight_units}}
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="batch?.applicator.water > 0">
+            <td>Water</td>
+            <td class="right">{{batch?.applicator.acres}}</td>
+            <td>{{batch?.applicator.water.toFixed(2)}} {{batch?.applicator.water_units}}</td>
+            <td>{{batch?.applicator.water_weight.toFixed(2)}} {{batch?.applicator.water_weight_units}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div *ngFor="let retailer of batch?.retailers" class="mls-products">
+      <table class="padded full-width">
+        <thead>
+          <tr>
+            <th style="width: 40%">{{retailer.name}} Products</th>
+            <th style="width: 20%">Total Acres</th>
+            <th style="width: 20%">Total Volume</th>
+            <th style="width: 20%">Total Weight</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let product of retailer?.products">
+            <td>{{product.name}}</td>
+            <td class="right">{{product.acres}}</td>
+            <td>
+              <table class="volume_table">
+                <tr>
+                  <td>{{product.total.toFixed(2)}} {{product.applied_units}}</td>
+                </tr>
+                <tr *ngIf="product.is_liquid && product.weight > 0" style="font-size: 0.8em;">
+                  <td>{{product.weight.toFixed(2)}} {{product.weight_units}}</td>
+                </tr>
+                <tr *ngIf="!product.is_liquid && product.volume > 0" style="font-size: 0.8em;">
+                  <td>{{product.volume.toFixed(2)}} {{product.volume_units}}</td>
+                </tr>
+              </table>
+            </td>
+            <td>
+              <div *ngIf="product.weight.toFixed(2)>0">
+                {{product.weight.toFixed(2)}} {{product.weight_units}}
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="retailer.water > 0">
+            <td>Water</td>
+            <td class="right">{{retailer.acres}}</td>
+            <td>{{retailer?.water.toFixed(2)}} {{retailer?.water_units}}</td>
+            <td>{{retailer?.water_weight.toFixed(2)}} {{retailer?.water_weight_units}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div style="width:100%">
+    <table class="padded full-width">
+      <thead>
+        <tr>
+          <th class="job-number">Job #</th>
+          <th class="load-number">Load #</th>
+          <th class="acres">Acres</th>
+          <th *ngIf="batch?.applicator.country != 'CA'" class="volume">Gallons</th>
+          <th *ngIf="batch?.applicator.country == 'CA'" class="volume">Liters</th>
+          <th *ngIf="batch?.applicator.country != 'CA'" class="volume">Pounds</th>
+          <th *ngIf="batch?.applicator.country == 'CA'" class="volume">Kilograms</th>
+          <th class="crop">Crop</th>
+          <th class="products">Product(s)</th>
+          <th class="customer">Customer</th>
+          <th class="provider">Product Provided By</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let job of batch?.jobs" class="outline">
+          <td class="left_outline">{{job.id}}</td>
+          <td>
+          </td>
+          <td class="right">{{job.total_acres.toFixed(2)}}</td>
+          <td *ngIf="batch?.applicator.country != 'CA'" class="right">{{job.total_gallons.toFixed(2)}}</td>
+          <td *ngIf="batch?.applicator.country == 'CA'" class="right">{{job.total_liters.toFixed(2)}}</td>
+          <td *ngIf="batch?.applicator.country != 'CA'" class="right">{{job.total_weight.toFixed(2)}}</td>
+          <td *ngIf="batch?.applicator.country == 'CA'" class="right">{{job.total_weight_kg.toFixed(2)}}</td>
+          <td>{{job.crop_name}}</td>
+          <td>
+            <div *ngFor="let rate of job.product_combination.rates">
+              {{rate}}<br>
+            </div>
+          </td>
+          <td class="squeeze">
+            {{job.retailer_name}}
+            <br> {{job.grower_name}}
+          </td>
+          <td class="right_outline squeeze">{{job.provider.join(',')}}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr class="totals">
+          <td colspan="2"><b>Totals</b></td>
+          <td class="right"><b>{{batch?.total_acres.toFixed(2)}}</b></td>
+          <td *ngIf="batch?.applicator.country != 'CA'" class="right"><b>{{batch?.total_gallons.toFixed(2)}}</b></td>
+          <td *ngIf="batch?.applicator.country == 'CA'" class="right"><b>{{batch?.total_liters.toFixed(2)}}</b></td>
+          <td class="right"><b>{{batch?.total_weight.toFixed(2)}}</b></td>
+          <td colspan="4"></td>
+        </tr>
+        <tfoot>
+    </table>
+  </div>
+</div>

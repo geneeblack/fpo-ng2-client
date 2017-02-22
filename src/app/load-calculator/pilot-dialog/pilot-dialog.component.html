@@ -1,0 +1,67 @@
+<div [@dialog] id="dialog" *ngIf="visible" class="ui-dialog ui-widget ui-widget-content ui-corner-all dialog">
+  <div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix">
+    <span id="ui-id-6" class="ui-dialog-title">Add a pilot or operator</span>
+    <button *ngIf="closable" (click)="close()" aria-label="Close" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only ui-dialog-titlebar-close">x</button>
+  </div>
+  <form novalidate #f="ngForm" autocomplete="on">
+    <div class="new-operator ui-dialog-content ui-widget-content">
+      <fieldset>
+        <label for="applicationType">Application Type</label>
+        <select (ngModelChange)="onApplicationTypeChange($event)" style="margin-bottom:10px; height:25px;line-height:25px;" name="applicationType"
+          class="form-control ui-widget-content ui-corner-all" [(ngModel)]="pilot.applicationType">
+        <option *ngFor="let applicationType of applicationTypes" [value]="applicationType.value">{{applicationType.display}}</option>
+      </select>
+        <label for="name">Pilot/Operator Name</label>
+        <input autocomplete="on" required [(ngModel)]="pilot.name" type="text" name="name" id="name" #name="ngModel" class="form-control text ui-widget-content ui-corner-all" />
+        <div *ngIf="name.errors" class="alert alert-danger">
+          <div [hidden]="!name.errors?.required">
+            <a href="#name" (click)="goto('name');"><b>pilot/operator name</b></a> is required
+          </div>
+        </div>
+        <label *ngIf="pilot.applicationType == 'liquid' && inbatch?.applicator.country != 'CA'" for="volume">Tank Size (gallons)</label>
+        <label *ngIf="pilot.applicationType == 'dry' && inbatch?.applicator.country != 'CA'" for="volume">Tank Size (pounds)</label>
+        <label *ngIf="pilot.applicationType == 'liquid' && inbatch?.applicator.country == 'CA'" for="volume">Tank Size (liters)</label>
+        <label *ngIf="pilot.applicationType == 'dry' && inbatch?.applicator.country == 'CA'"  for="volume">Tank Size (kilograms)</label>
+        <input required [(ngModel)]="pilot.volume" type="number" name="volume" id="volume" [min]="1" [max]="65000" #volume="ngModel" class="form-control text ui-widget-content ui-corner-all"
+        />
+        <div *ngIf="volume.errors" class="alert alert-danger">
+          <div [hidden]="!volume.errors?.required">
+            <a href="#volume" (click)="goto('volume');"><b>tank size</b></a> is required
+          </div>
+          <div [hidden]="!volume.errors?.min">
+            minimum <a href="#volume" (click)="goto('volume');"><b>tank size</b></a> is 1
+          </div>
+          <div [hidden]="!volume.errors?.max">
+            maximum <a href="#volume" (click)="goto('volume');"><b>tank size</b></a> is {{ 65000 }}.
+          </div>
+        </div>
+        <label for="acres">Total Acres to Apply ( {{ pilot?.originalAcresRemaining }} remaining )</label>
+        <input required [(ngModel)]="pilot.acres" type="number" name="acres" id="acres" [min]="1" [max]="pilot?.originalAcresRemaining" #acres="ngModel" class="form-control text ui-widget-content ui-corner-all"
+        />
+        <div *ngIf="acres.errors" class="alert alert-danger">
+          <div [hidden]="!acres.errors?.required">
+            <a href="#acres" (click)="goto('acres');"><b>acres to apply</b></a> is required
+          </div>
+          <div [hidden]="!acres.errors?.min">
+            <div *ngIf="pilot?.originalAcresRemaining > 0">
+              minimum <a href="#acres" (click)="goto('acres');"><b>acres to apply</b></a> is 1
+            </div>
+            <div *ngIf="pilot?.originalAcresRemaining < 1">
+              there are no <a href="#acres" (click)="goto('acres');"><b>remaining acres to apply</b></a>  for {{ pilot?.applicationType | lowercase }} application
+            </div>
+          </div>
+          <div [hidden]="!acres.errors?.max">
+            maximum <a href="#acres" (click)="goto('acres');"><b>acres to apply</b></a> for {{ pilot?.applicationType | lowercase }} application is currently {{ pilot?.originalAcresRemaining }}.
+          </div>
+        </div>
+      </fieldset>
+    </div>
+    <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+      <div class="ui-dialog-buttonset">
+        <button  (click)="addPilot(pilot, f.form.valid)" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"><span class="ui-button-text">Add pilot/operator</span></button>
+        <button (click)="close()" class="ui-button  ui-widget ui-state-default ui-corner-all ui-button-text-only"><span class="ui-button-text">Cancel</span></button>
+      </div>
+    </div>
+  </form>
+</div>
+<div *ngIf="visible" class="overlay" (click)="close()"></div>
